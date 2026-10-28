@@ -23,3 +23,10 @@ LangGraph가 사용자·카테고리별 통계를 조회하고 GPT에 분해를 
 
 목표와 카테고리, 보정 계수는 OpenAI에 전송됩니다. 개인별 원본 기록과 user ID는 전송하지 않습니다. 개인 기록은 로컬 history.sqlite3에 저장됩니다. 이는 단일 사용자 프로토타입으로, 인증·암호화·Pinit 연동·계획 저장 기능이 없습니다. 공유 서버에 그대로 배포하지 마세요. 실제 GPT 호출은 API 키가 필요합니다.
 
+
+## PyCharm에서 API 키 설정
+
+프로젝트 폴더에서 .env.example을 .env로 복사하고 .env 파일에 API 키를 직접 입력합니다.
+OPENAI_MODEL은 계정에서 사용할 수 있는 모델 ID로 바꿀 수 있습니다. .env는 Git에 포함되지 않습니다.
+이미 설정된 환경 변수는 .env보다 우선합니다. 키를 채팅이나 GitHub에 올리지 마세요.
+PyCharm의 Python 인터프리터에서 requirements.txt 패키지를 설치한 다음 실행합니다.

@@ -1,8 +1,10 @@
 import argparse, json, sys
 from agent import connect, record
 from graph_agent import plan
+from settings import load_settings
 
 def main():
+    load_settings()
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="command", required=True)
     for name in ("plan", "feedback"):
@@ -26,4 +28,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"오류: {e}", file=sys.stderr)
         sys.exit(1)
+
 
