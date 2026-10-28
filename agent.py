@@ -1,4 +1,4 @@
-import json, math, os, sqlite3, statistics, urllib.request
+import math, sqlite3, statistics
 
 def connect(path="history.sqlite3"):
     db = sqlite3.connect(path)
@@ -24,20 +24,10 @@ def validate(items, multiplier):
         output.append({"title": title, "done_when": done, "base_minutes": base, "estimated_minutes": adjusted})
     return output
 
-def propose(goal, category, multiplier):
-    endpoint, model, key = (os.environ.get(x) for x in ("AI_ENDPOINT", "AI_MODEL", "AI_API_KEY"))
-    if not all((endpoint, model, key)):
-        raise ValueError("AI_ENDPOINT, AI_MODEL, AI_API_KEY 환경 변수가 필요합니다.")
-    prompt = f"목표: {goal}\n카테고리: {category}\n개인 보정 계수: {multiplier}. 목표를 현실적이고 구체적인 순서로 분해하세요. 각 항목은 완료 기준이 명확하며 base_minutes에 보정 계수를 곱해도 30분 이하여야 합니다. 작업을 생략하거나 시간을 줄여 표시하지 말고 더 작은 행동으로 나누세요. JSON만 반환: {{\"tasks\":[{{\"title\":\"...\",\"done_when\":\"...\",\"base_minutes\":15}}]}}"
-    payload = json.dumps({"model": model, "messages": [{"role":"user", "content":prompt}]}).encode("utf-8")
-    req = urllib.request.Request(endpoint, data=payload, headers={"Authorization":"Bearer "+key, "Content-Type":"application/json"})
-    with urllib.request.urlopen(req, timeout=60) as response:
-        result = json.load(response)
-    return validate(json.loads(result["choices"][0]["message"]["content"])["tasks"], multiplier)
-
 def record(db, user, category, base, actual):
     if not user.strip() or not category.strip() or not all(math.isfinite(x) and 0 < x <= 1440 for x in (base, actual)):
         raise ValueError("사용자, 카테고리와 0보다 크고 1440 이하인 시간이 필요합니다.")
     db.execute("INSERT INTO history VALUES (?, ?, ?, ?)", (user, category, base, actual))
     db.commit()
+
 
