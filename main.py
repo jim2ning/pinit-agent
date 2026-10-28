@@ -1,5 +1,6 @@
 import argparse, json, sys
-from agent import connect, factor, propose, record
+from agent import connect, record
+from graph_agent import plan
 
 def main():
     p = argparse.ArgumentParser()
@@ -15,8 +16,7 @@ def main():
     a = p.parse_args()
     with connect() as db:
         if a.command == "plan":
-            f, n = factor(db, a.user, a.category)
-            print(json.dumps({"factor":f, "samples":n, "tasks":propose(a.goal, a.category, f)}, ensure_ascii=False, indent=2))
+            print(json.dumps(plan(db, a.user, a.category, a.goal), ensure_ascii=False, indent=2))
         else:
             record(db, a.user, a.category, a.base_minutes, a.actual_minutes)
             print("기록했습니다.")
